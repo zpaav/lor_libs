@@ -42,7 +42,9 @@ function Actor.new(id)
         last_move_check = now,
         last_ipc_sent = now,
         last_acting_state = true,
-        indi = {}, geo = {}, ipc_delay = 2, zone_wait = false
+		--Original
+        --indi = {}, geo = {}, ipc_delay = 2, zone_wait = false
+		indi = {}, geo = {}, ipc_delay = 6, zone_wait = false
     }
     if (not id) or (player.id == id) then
         self:update({
