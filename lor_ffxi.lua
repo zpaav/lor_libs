@@ -50,10 +50,8 @@ function lor_ffxi.target_is_valid(action, target)
             targetType = 'Ally'
         end
     else
-		local player = windower.ffxi.get_player()
-        targetType = (player.name == target.name) and 'Self' or 'Party'
         --targetType = 'Player'
-        --targetType = 'Ally' --Workaround for incorrect entries in resources
+        targetType = 'Ally' --Workaround for incorrect entries in resources
     end
     return S(action.targets):contains(targetType)
 end

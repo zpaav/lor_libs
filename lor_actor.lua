@@ -164,11 +164,12 @@ end
 
 function Actor:in_casting_range(targ)
     -- Returns true if the given target is within spell casting range
+	local target = ffxi.get_target(targ)
     local dist = self:dist_from(targ)
     if dist == -1 then
         return False
     else
-        return dist < 20.9
+        return dist < (20.9 + target.model_size)
     end
 end
 
