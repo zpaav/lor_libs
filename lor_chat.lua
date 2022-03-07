@@ -81,7 +81,7 @@ end
 --]]
 function atcfs(...)
     local args = T({...})
-    local c = 0
+    local c = 5
     if type(args[1]) == 'number' then
         c = args[1]
         args = args:slice(2)
