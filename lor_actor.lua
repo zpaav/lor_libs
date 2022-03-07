@@ -14,6 +14,8 @@ _libs.lor.actor = lor_actor
 _libs.lor.req('chat', 'position', 'resources')
 
 local res = require('resources')
+-- local lists = require ('lists')
+-- local sets = require ('sets')
 local Pos = _libs.lor.position
 local ffxi = _libs.lor.ffxi
 local messages_initiating = _libs.lor.packets.messages_initiating
@@ -245,27 +247,31 @@ function Actor:can_use(action)
     local player = windower.ffxi.get_player()
     if (player == nil) or (action == nil) then return false end
     if magic_prefixes:contains(action.prefix) then
+		local learned
 		if action.id == 503 then -- impact
-			equip_bags = {0,8,10,11,12,13,14,15,16} -- Equipable
-			impact_cloaks = S{11363,23799}
-			for _,bag in ipairs(equip_bags) do
-				local storage = windower.ffxi.get_items(bag)
-				for _,item in ipairs(storage) do
-					if item.id > 0 then
-						if impact_cloaks:contains(item.id) then
-							learned = true
-						end
+			-- Credits to Rubenator
+			local equippable_bags = res.bags:equippable(true):map(windower.ffxi.get_items..table.get-{'id'}):filter(table.get-{'enabled'}):map(L..table.key_filter-{functions.equals('number')..type})
+			for bag_id, bag in pairs(equippable_bags) do 
+				bag:map(table.set-{'bag',bag_id}) 
+			end
+			local equippable_items = L{equippable_bags:extract()}:flatten(false)
+			local impact_cloaks = S{11363,23799}
+			for _,item in ipairs(equippable_items) do
+				if item.id > 0 then
+					if impact_cloaks:contains(item.id) then
+						learned = true
 					end
 				end
 			end
 		else
 			learned = windower.ffxi.get_spells()[action.id]
 		end
-        if learned and action.id ~= 503 then -- If not Impact, do checks
+        if learned then
             local mj_id, sj_id = player.main_job_id, player.sub_job_id
             local jp_spent = player.job_points[player.main_job:lower()].jp_spent
             local mj_req = action.levels[mj_id]
             local sj_req = action.levels[sj_id]
+			
             local main_can_cast, sub_can_cast = false, false
             if mj_req ~= nil then
                 main_can_cast = (mj_req <= player.main_job_level) or (mj_req <= jp_spent)
@@ -274,7 +280,6 @@ function Actor:can_use(action)
                 sub_can_cast = (sj_req <= player.sub_job_level)
             end
 			return main_can_cast or sub_can_cast
-		elseif learned and action.id == 503 then return true -- Impact, who cares about checks - for now...
         else
             atcd(('%s has not learned %s'):format(player.name, action.en))
         end
