@@ -245,8 +245,23 @@ function Actor:can_use(action)
     local player = windower.ffxi.get_player()
     if (player == nil) or (action == nil) then return false end
     if magic_prefixes:contains(action.prefix) then
-        local learned = windower.ffxi.get_spells()[action.id]
-        if learned then
+		if action.id == 503 then -- impact
+			equip_bags = {0,8,10,11,12,13,14,15,16} -- Equipable
+			impact_cloaks = S{11363,23799}
+			for _,bag in ipairs(equip_bags) do
+				local storage = windower.ffxi.get_items(bag)
+				for _,item in ipairs(storage) do
+					if item.id > 0 then
+						if impact_cloaks:contains(item.id) then
+							learned = true
+						end
+					end
+				end
+			end
+		else
+			learned = windower.ffxi.get_spells()[action.id]
+		end
+        if learned and action.id ~= 503 then -- If not Impact, do checks
             local mj_id, sj_id = player.main_job_id, player.sub_job_id
             local jp_spent = player.job_points[player.main_job:lower()].jp_spent
             local mj_req = action.levels[mj_id]
@@ -258,7 +273,8 @@ function Actor:can_use(action)
             if sj_req ~= nil then
                 sub_can_cast = (sj_req <= player.sub_job_level)
             end
-            return main_can_cast or sub_can_cast
+		elseif action.id == 503 then -- Impact, who cares about checks
+			return true
         else
             atcd(('%s has not learned %s'):format(player.name, action.en))
         end
