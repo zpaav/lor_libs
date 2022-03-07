@@ -273,8 +273,8 @@ function Actor:can_use(action)
             if sj_req ~= nil then
                 sub_can_cast = (sj_req <= player.sub_job_level)
             end
-		elseif action.id == 503 then -- Impact, who cares about checks
-			return true
+			return main_can_cast or sub_can_cast
+		elseif learned and action.id == 503 then return true -- Impact, who cares about checks - for now...
         else
             atcd(('%s has not learned %s'):format(player.name, action.en))
         end
