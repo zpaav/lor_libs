@@ -263,6 +263,11 @@ function Actor:can_use(action)
 					end
 				end
 			end
+		elseif action.type == 'BlueMagic' then
+			if (player.main_job_id == 16 and table.contains(windower.ffxi.get_mjob_data().spells,action.id))
+			or (player.sub_job_id == 16 and table.contains(windower.ffxi.get_sjob_data().spells,action.id)) then
+				learned = windower.ffxi.get_spells()[action.id]
+			end
 		else
 			learned = windower.ffxi.get_spells()[action.id]
 		end
