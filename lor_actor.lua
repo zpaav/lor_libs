@@ -10,6 +10,7 @@ lor_actor._version = '2018.05.27.0'
 
 require('tables')
 require('lor/lor_utils')
+packets = require('packets')
 _libs.lor.actor = lor_actor
 _libs.lor.req('chat', 'position', 'resources')
 
@@ -321,6 +322,62 @@ function Actor:ready_to_use(action)
     return false
 end
 
+--Credits to SetTarget
+function Actor:set_target(id)
+    id = tonumber(id)
+    if id == nil then
+        return
+    end
+
+    local target = windower.ffxi.get_mob_by_id(id)
+    if not target then
+        return
+    end
+
+    local player = windower.ffxi.get_player()
+
+    packets.inject(packets.new('incoming', 0x058, {
+        ['Player'] = player.id,
+        ['Target'] = target.id,
+        ['Player Index'] = player.index,
+    }))
+end
+
+function Actor:attack_target(id)
+    id = tonumber(id)
+    if id == nil then
+        return
+    end
+
+    local target = windower.ffxi.get_mob_by_id(id)
+    if not target then
+        return
+    end
+
+    packets.inject(packets.new('outgoing', 0x01A, {
+        ['Target'] = target.id,
+        ['Target Index'] = target.index,
+        ['Category'] = 2,
+    }))
+end
+
+function Actor:switch_target(id)
+    id = tonumber(id)
+    if id == nil then
+        return
+    end
+
+    local target = windower.ffxi.get_mob_by_id(id)
+    if not target then
+        return
+    end
+
+    packets.inject(packets.new('outgoing', 0x01A, {
+        ['Target'] = target.id,
+        ['Target Index'] = target.index,
+        ['Category'] = 15,
+    }))
+end
 
 --Actor Group ==========================================================================================================
 
