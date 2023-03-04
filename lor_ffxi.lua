@@ -11,6 +11,16 @@ lor_ffxi._version = '2018.05.20.0'
 require('lor/lor_utils')
 _libs.lor.ffxi = lor_ffxi
 
+function lor_ffxi.handle_dnc(healer)
+	if healer.main_job == 'DNC' then
+		return true
+	elseif healer.sub_job == 'DNC' and not (S{'WHM','SCH'}:contains(healer.main_job)) then
+		return true
+	elseif healer.sub_job == 'DNC' then
+		return false
+	end
+end
+
 
 function lor_ffxi.get_target(targ)
     if targ == nil then
@@ -37,9 +47,10 @@ function lor_ffxi.target_is_valid(action, target)
         target = lor_ffxi.get_target(target)
     end
     if target == nil then return false end
+	
     local stype = target.spawn_type
-
     local targetType = 'None'
+
     if target.is_npc and (stype ~= 14) then
         targetType = 'Enemy'
     elseif target.in_alliance then
@@ -50,9 +61,9 @@ function lor_ffxi.target_is_valid(action, target)
             targetType = 'Ally'
         end
     else
-        --targetType = 'Player'
         targetType = 'Ally' --Workaround for incorrect entries in resources
     end
+	if (action.id == 94 and targetType == 'Self') then return false end
     return S(action.targets):contains(targetType)
 end
 

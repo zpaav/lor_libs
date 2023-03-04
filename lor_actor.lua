@@ -311,7 +311,12 @@ function Actor:ready_to_use(action)
         if (player == nil) then return false end
         if magic_prefixes:contains(action.prefix) then
             local rc = windower.ffxi.get_spell_recasts()[action.recast_id]
-            return rc == 0
+			local mp_cost = (player.vitals.mp >= action.mp_cost)
+            return (rc == 0 and mp_cost == true)
+		elseif (player.main_job == 'DNC' or player.sub_job == 'DNC') and action.prefix == '/jobability' then
+			local rc = windower.ffxi.get_ability_recasts()[action.recast_id]
+			local tp_cost = (player.vitals.tp >= action.tp_cost)
+			return (rc == 0 and tp_cost == true)
         elseif S{'/jobability', '/pet'}:contains(action.prefix) then
             local rc = windower.ffxi.get_ability_recasts()[action.recast_id]
             return rc == 0
