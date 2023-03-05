@@ -11,17 +11,6 @@ lor_ffxi._version = '2018.05.20.0'
 require('lor/lor_utils')
 _libs.lor.ffxi = lor_ffxi
 
-function lor_ffxi.handle_dnc(healer)
-	if healer.main_job == 'DNC' then
-		return true
-	elseif healer.sub_job == 'DNC' and not (S{'WHM','SCH'}:contains(healer.main_job)) then
-		return true
-	elseif healer.sub_job == 'DNC' then
-		return false
-	end
-end
-
-
 function lor_ffxi.get_target(targ)
     if targ == nil then
         return nil
