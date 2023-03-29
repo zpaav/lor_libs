@@ -44,7 +44,9 @@ function lor_serialization.decode(lua_str)
     
     local loaded = nil
     loaded = loadstring(lua_str)
-    global.setfenv(loaded, _G)       --Allows loading of S{}, T{}, etc.
+	if loaded then
+		global.setfenv(loaded, _G)       --Allows loading of S{}, T{}, etc.
+	end
     loaded = loaded()
     
     if loaded == nil then
