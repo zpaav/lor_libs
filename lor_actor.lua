@@ -244,6 +244,7 @@ function Actor:can_use(action)
         Returns true if the given spell/ability has been learned and is available on the current job.
     --]]
     local player = windower.ffxi.get_player()
+	local abil_recast = windower.ffxi.get_ability_recasts()
     if (player == nil) or (action == nil) then return false end
     if magic_prefixes:contains(action.prefix) then
 		local learned
@@ -263,9 +264,14 @@ function Actor:can_use(action)
 				end
 			end
 		elseif action.type == 'BlueMagic' then
-			if (player.main_job_id == 16 and table.contains(windower.ffxi.get_mjob_data().spells,action.id))
-			or (player.sub_job_id == 16 and table.contains(windower.ffxi.get_sjob_data().spells,action.id)) then
-				learned = windower.ffxi.get_spells()[action.id]
+			local unbridled_spells = S{736,737,738,739,740,741,742,743,744,745,746,747,748,749,750,751,752,753}
+			if ((player.main_job_id == 16 and table.contains(windower.ffxi.get_mjob_data().spells,action.id))
+			or (player.sub_job_id == 16 and table.contains(windower.ffxi.get_sjob_data().spells,action.id))) or (unbridled_spells:contains(action.id)) then
+				if unbridled_spells:contains(action.id) and abil_recast[81] == 0 then
+					learned = windower.ffxi.get_spells()[action.id]
+				else
+					learned = windower.ffxi.get_spells()[action.id]
+				end
 			end
 		else
 			learned = windower.ffxi.get_spells()[action.id]
@@ -280,7 +286,7 @@ function Actor:can_use(action)
             if mj_req ~= nil then
                 main_can_cast = (mj_req <= player.main_job_level) or (mj_req <= jp_spent)
             end
-            if sj_req ~= nil then
+            if sj_req ~= nil and not Actor.buff_active('SJ Restriction') then
                 sub_can_cast = (sj_req <= player.sub_job_level)
             end
 			return main_can_cast or sub_can_cast
