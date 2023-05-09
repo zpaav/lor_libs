@@ -46,9 +46,9 @@ function lor_serialization.decode(lua_str)
     loaded = loadstring(lua_str)
 	if loaded then
 		global.setfenv(loaded, _G)       --Allows loading of S{}, T{}, etc.
+		loaded = loaded()
 	end
-    loaded = loaded()
-    
+
     if loaded == nil then
         return loaded
     elseif type(loaded) == 'table' then    
