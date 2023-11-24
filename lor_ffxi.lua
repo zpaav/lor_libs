@@ -54,7 +54,7 @@ function lor_ffxi.target_is_valid(action, target)
     end
 	if (action.id == 94 and targetType == 'Self') then return false end
 	
-	if S{253,259,463,471}:contains(action.id) and (targetType == 'Party' or targetType == 'Ally')) then return true end
+	if (S{253,259,463,471}:contains(action.id) and (targetType == 'Party' or targetType == 'Ally')) then return true end
     return S(action.targets):contains(targetType)
 end
 
