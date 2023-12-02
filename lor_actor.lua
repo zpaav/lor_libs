@@ -10,6 +10,7 @@ lor_actor._version = '2018.05.27.0'
 
 require('tables')
 require('lor/lor_utils')
+require('vectors')
 packets = require('packets')
 _libs.lor.actor = lor_actor
 _libs.lor.req('chat', 'position', 'resources')
@@ -153,13 +154,22 @@ function Actor:is_moving()
 end
 
 
+-- function Actor:dist_from(targ)
+    -- -- Returns the distance from the target in in-game units, or -1 if the target could not be determined
+    -- local target = ffxi.get_target(targ)
+    -- if target ~= nil then
+        -- return math.sqrt(target.distance)
+    -- end
+    -- return -1
+-- end
+
 function Actor:dist_from(targ)
-    -- Returns the distance from the target in in-game units, or -1 if the target could not be determined
-    local target = ffxi.get_target(targ)
-    if target ~= nil then
-        return math.sqrt(target.distance)
-    end
-    return -1
+	local p = ffxi.get_target('me')
+	local p_2 = ffxi.get_target(targ)
+	if p_2 ~= nil and p ~= nil then
+		return ((V{p_2.x, p_2.y, (p_2.z*-1)} - V{p.x, p.y, (p.z*-1)}):length())
+	end
+	return -1
 end
 
 
