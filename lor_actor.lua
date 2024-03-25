@@ -195,6 +195,15 @@ function Actor:move_towards(targ)
     end
 end
 
+function Actor:move_away(targ)
+    local target = ffxi.get_target(targ)
+    if target ~= nil then
+        local my_pos = Pos.current_position()
+        if my_pos ~= nil then
+            windower.ffxi.run(my_pos:getDirRadian(Pos.of(target)) + 180)
+        end
+    end
+end
 
 function Actor:update_status(id, parsed_action)
     --[[
